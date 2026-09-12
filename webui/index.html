@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rust Daemon</title>
+<link rel="stylesheet" href="/webui/css/style.css">
+</head>
+<body>
+<div id="loginPage" class="page login-page active">
+  <div class="login-box">
+    <h2 data-i="node_daemon">Rust Daemon</h2>
+    <div class="form-group">
+      <label for="username" data-i="username">Username</label>
+      <input type="text" id="username" autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label for="password" data-i="password">Password</label>
+      <input type="password" id="password" autocomplete="current-password">
+    </div>
+    <div class="form-error" id="loginError"></div>
+    <button class="btn btn-primary form-btn" id="loginBtn" onclick="login()" data-i="login">Login</button>
+  </div>
+</div>
+
+<div id="dashboardPage" class="page">
+  <div class="header">
+    <div class="header-inner">
+      <h1 data-i="node_daemon">Rust Daemon</h1>
+      <div class="header-actions">
+        <button class="btn btn-sm btn-primary" onclick="ncf()" data-i="add_service">Add Service</button>
+        <button class="btn btn-sm" onclick="logout()" data-i="logout">Logout</button>
+        <span class="header-divider"></span>
+        <button class="lang-btn" data-lang="en" onclick="_sl('en')">EN</button>
+        <button class="lang-btn" data-lang="zh-CN" onclick="_sl('zh-CN')">简</button>
+        <button class="lang-btn" data-lang="zh-TW" onclick="_sl('zh-TW')">繁</button>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div id="serverStats"></div>
+    <div class="section-title" style="margin-top:16px" data-i="services">Services</div>
+    <div class="status-grid" id="serviceGrid"></div>
+  </div>
+</div>
+
+<div id="msg" class="msg" style="display:none"></div>
+<div id="cModal" class="modal-overlay" onclick="if(event.target===this)cc()">
+  <div class="modal-box">
+    <h3 id="cTitle" data-i="confirm">Confirm</h3>
+    <p id="cMsg">Are you sure?</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="cc()" data-i="cancel">Cancel</button>
+      <button class="btn btn-primary" id="cBtn" onclick="ec()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div id="cfModal" class="modal-overlay" onclick="if(event.target===this)hcf()">
+  <div class="modal-box" style="max-width:520px">
+    <h3 id="cfTitle" data-i="create_service">Create Service</h3>
+    <div class="cf-form">
+      <div class="form-group">
+        <label for="cfId"><span data-i="service_id">Service ID</span> *</label>
+        <input type="text" id="cfId" placeholder="my-service">
+      </div>
+      <div class="form-group">
+        <label for="cfCmd"><span data-i="command">Command</span> *</label>
+        <input type="text" id="cfCmd" placeholder="npm run start">
+      </div>
+      <div class="form-group">
+        <label for="cfCwd"><span data-i="working_directory">Working Directory</span> *</label>
+        <input type="text" id="cfCwd" placeholder=".">
+      </div>
+      <div class="cf-row">
+        <div class="form-group">
+          <label for="cfPri" data-i="priority">Priority</label>
+          <input type="number" id="cfPri" value="0" min="0" max="999">
+        </div>
+        <div class="form-group">
+          <label for="cfRet" data-i="max_retries">Max Retries</label>
+          <input type="number" id="cfRet" value="3" min="0">
+        </div>
+      </div>
+      <div class="cf-row">
+        <label class="cf-check"><input type="checkbox" id="cfAutoStart"> <span data-i="auto_start">Auto Start</span></label>
+        <label class="cf-check"><input type="checkbox" id="cfRetryOnExit" checked> <span data-i="retry_on_exit">Retry on Abnormal Exit</span></label>
+      </div>
+      <div class="cf-row">
+        <label class="cf-check"><input type="checkbox" id="cfLogEnabled"> <span data-i="logging">Enable Logging</span></label>
+        <div class="form-group">
+          <label for="cfLogDays" data-i="log_retention">Log Retention (days)</label>
+          <input type="number" id="cfLogDays" value="7" min="1">
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions" id="cfErr" style="color:#cc0000;font-size:12px;flex:1"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="hcf()" data-i="cancel">Cancel</button>
+      <button class="btn btn-primary" id="cfBtn" onclick="scf()" data-i="create">Create</button>
+    </div>
+  </div>
+</div>
+
+<script src="/webui/js/i18n.js"></script>
+<script src="/webui/js/app.js"></script>
+</body>
+</html>

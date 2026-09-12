@@ -1,0 +1,29 @@
+[package]
+name = "rust-daemon"
+version = "1.0.0"
+edition = "2021"
+description = "Cross-platform service daemon for Windows and Linux (Rust port of NodeDaemon)"
+
+[dependencies]
+axum = { version = "0.8", default-features = false, features = ["http1", "json", "matched-path", "original-uri", "query", "tokio"] }
+chrono = { version = "0.4", default-features = false, features = ["clock"] }
+dotenvy = "0.15"
+hex = "0.4"
+hmac = "0.12"
+hostname = "0.4"
+rand = { version = "0.8", default-features = false, features = ["std", "std_rng"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+sysinfo = { version = "0.30", default-features = false }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "signal", "process", "io-util", "time", "net"] }
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true

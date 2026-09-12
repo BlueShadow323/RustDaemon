@@ -1,0 +1,21 @@
+# Build artifacts
+/target
+/dist
+
+# Runtime data
+logs/
+
+# Keep the services/ directory tracked, but ignore its contents
+services/*
+!services/.gitkeep
+
+# Local secrets (keep .env.example tracked)
+.env
+.env.local
+
+# Editor / OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
