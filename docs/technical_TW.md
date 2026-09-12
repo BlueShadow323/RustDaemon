@@ -17,19 +17,22 @@
 
 兩個伺服器共用同一個 `Arc<ServiceManager>` 與 `Arc<ConfigLoader>`，因此無論從哪個介面發出控制指令，操作的都是同一份程序登錄表。
 
-```
-                 ┌────────────────────────── Tokio runtime ──────────────────────────┐
-  POST /service/... │  daemon_server.rs     webui_server.rs                          │
-  ─────────────────┼─────────────────────────────────────────────────────────────────┤
-                 │         └──────────────┬──────────────┘                          │
-                 │                        ▼                                          │
-                 │              ServiceManager（共用）                                │
-                 │   spawn / kill / restart / status / auto-restart                 │
-                 │                        │                                          │
-                 │               ConfigLoader（services/*.json）                      │
-                 │                        │                                          │
-                 │               ServiceLogger（logs/<name>/）                        │
-                 └───────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    subgraph tokio["Tokio runtime"]
+        daemon["daemon_server.rs<br/>HMAC API（:10300）"]
+        webui["webui_server.rs<br/>Web UI（:10400）"]
+        mgr["ServiceManager<br/>啟動 / 終止 / 重啟 / 自動重啟"]
+        cfg["ConfigLoader<br/>services/*.json"]
+        log["ServiceLogger<br/>logs/<name>/"]
+    end
+
+    clients["HTTP 用戶端 / 瀏覽器"] --> daemon
+    clients --> webui
+    daemon --> mgr
+    webui --> mgr
+    mgr --> cfg
+    mgr --> log
 ```
 
 ## 2. 模組說明

@@ -17,19 +17,22 @@ The daemon runs **two independent HTTP servers** inside one Tokio runtime:
 
 Both servers share a single `Arc<ServiceManager>` and `Arc<ConfigLoader>`, so a control command issued through either interface acts on the same process registry.
 
-```
-                 ┌────────────────────────── Tokio runtime ──────────────────────────┐
-  POST /service/... │  daemon_server.rs     webui_server.rs                          │
-  ─────────────────┼─────────────────────────────────────────────────────────────────┤
-                 │         └──────────────┬──────────────┘                          │
-                 │                        ▼                                          │
-                 │              ServiceManager (shared)                              │
-                 │   spawn / kill / restart / status / auto-restart                 │
-                 │                        │                                          │
-                 │               ConfigLoader (services/*.json)                      │
-                 │                        │                                          │
-                 │               ServiceLogger (logs/<name>/)                        │
-                 └───────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    subgraph tokio["Tokio runtime"]
+        daemon["daemon_server.rs<br/>HMAC API (:10300)"]
+        webui["webui_server.rs<br/>Web UI (:10400)"]
+        mgr["ServiceManager<br/>spawn / kill / restart / auto-restart"]
+        cfg["ConfigLoader<br/>services/*.json"]
+        log["ServiceLogger<br/>logs/<name>/"]
+    end
+
+    clients["HTTP clients / browser"] --> daemon
+    clients --> webui
+    daemon --> mgr
+    webui --> mgr
+    mgr --> cfg
+    mgr --> log
 ```
 
 ## 2. Module Map
